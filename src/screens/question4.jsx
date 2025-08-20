@@ -20,3 +20,17 @@ const Question4 = () => {
         placeholder="Mention all health conditions"
         value={conditions}
         onChange={(e) => setConditions(e.target.value)}
+        className="w-full bg-purple-800 text-white py-3 px-4 rounded-xl mb-6"
+      />
+
+      <button
+        onClick={handleFinish}
+        className="w-full bg-purple-500 py-3 rounded-xl"
+      >
+        Finish
+      </button>
+    </div>
+  );
+};
+
+export default Question4;
