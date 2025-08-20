@@ -33,7 +33,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'sans-serif'],
+        serif: ['Lora', 'serif'],
       },
       boxShadow: {
         'lavender': '0 4px 14px 0 rgba(168, 145, 189, 0.25)',
