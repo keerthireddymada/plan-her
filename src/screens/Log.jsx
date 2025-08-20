@@ -7,6 +7,7 @@ const Log = () => {
   const [energyLevel, setEnergyLevel] = useState(5);
   const [symptoms, setSymptoms] = useState([]);
   const [notes, setNotes] = useState('');
+  const [isPeriodStarted, setIsPeriodStarted] = useState(false);
 
   const moods = [
     { value: 'happy', label: '😊 Happy' },
@@ -22,11 +23,28 @@ const Log = () => {
   ];
 
   const toggleSymptom = (symptom) => {
-    setSymptoms(prev => 
-      prev.includes(symptom) 
+    setSymptoms(prev =>
+      prev.includes(symptom)
         ? prev.filter(s => s !== symptom)
         : [...prev, symptom]
     );
+  };
+
+  const handleSaveLog = () => {
+    const logData = {
+      mood: selectedMood,
+      energy: energyLevel,
+      symptoms,
+      notes,
+      date: new Date().toISOString(),
+    };
+    console.log("Saving log:", logData);
+    // Here you would typically save to a database or local storage
+  };
+
+  const handleTogglePeriod = () => {
+    setIsPeriodStarted(prev => !prev);
+    console.log("Period tracking toggled. Is started:", !isPeriodStarted);
   };
 
   return (
@@ -38,7 +56,7 @@ const Log = () => {
     >
       {/* Header */}
       <div className="mb-8">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-2xl font-bold text-white mb-2"
@@ -53,10 +71,11 @@ const Log = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         whileTap={{ scale: 0.98 }}
+        onClick={handleTogglePeriod}
         className="w-full bg-lavender-600 text-white rounded-2xl p-4 mb-6 flex items-center justify-center shadow-glow"
       >
         <Plus size={20} className="mr-2" />
-        <span className="font-semibold">Log Period Start/End</span>
+        <span className="font-semibold">{isPeriodStarted ? "Log Period End" : "Log Period Start"}</span>
       </motion.button>
 
       {/* Mood Selection */}
@@ -70,7 +89,7 @@ const Log = () => {
           <Smile className="text-lavender-400 mr-3" size={24} />
           <h2 className="text-lg font-semibold text-white">Mood</h2>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-3">
           {moods.map((mood) => (
             <motion.button
@@ -101,7 +120,7 @@ const Log = () => {
           <h2 className="text-lg font-semibold text-white">Energy Level</h2>
           <span className="ml-auto text-2xl font-bold text-lavender-400">{energyLevel}/10</span>
         </div>
-        
+
         <div className="space-y-4">
           <input
             type="range"
@@ -133,7 +152,7 @@ const Log = () => {
           <AlertCircle className="text-lavender-400 mr-3" size={24} />
           <h2 className="text-lg font-semibold text-white">Symptoms</h2>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-3">
           {commonSymptoms.map((symptom) => (
             <motion.button
@@ -163,7 +182,7 @@ const Log = () => {
           <Heart className="text-lavender-400 mr-3" size={24} />
           <h2 className="text-lg font-semibold text-white">Notes</h2>
         </div>
-        
+
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -178,6 +197,7 @@ const Log = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
         whileTap={{ scale: 0.98 }}
+        onClick={handleSaveLog}
         className="w-full bg-black-900 text-white rounded-2xl p-4 font-semibold hover:bg-black-800 transition-all"
       >
         Save Today's Log
