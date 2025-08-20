@@ -8,6 +8,21 @@ const Question2 = () => {
   const [cycleLength, setCycleLength] = useState("");
 
   const handleNext = () => {
+    const pageData = {
+      lastPeriod: lastPeriod,
+      periodEndDate: periodEndDate,
+      cycleLength: parseInt(cycleLength),
+    };
+
+    // Get any data you saved from previous pages
+    const existingData = JSON.parse(localStorage.getItem('questionnaireData')) || {};
+    
+    // Add this page's data to it
+    const updatedData = { ...existingData, ...pageData };
+    
+    // Save the combined data back to local storage
+    localStorage.setItem('questionnaireData', JSON.stringify(updatedData));
+
     navigate("/question3");
   };
 
