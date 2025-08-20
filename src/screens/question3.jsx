@@ -12,7 +12,7 @@ const Question3 = () => {
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-black text-white px-6">
-      <h2 className="text-xl font-semibold mb-6">How tall are you?</h2>
+      <h2 className="text-xl font-semibold mb-6">How tall are you and how much do you weigh?</h2>
 
       <input
         type="number"

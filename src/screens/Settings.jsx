@@ -38,7 +38,9 @@ const Settings = () => {
 
   const handleAction = (item) => {
     if (item.action === 'toggle') {
+      console.log(`Toggling ${item.label}. Current state: ${item.state}`);
       item.setState(!item.state);
+      console.log(`New state: ${!item.state}`);
     } else if (item.action === 'logout') {
       console.log('Logout');
     } else {

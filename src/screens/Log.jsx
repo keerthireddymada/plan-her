@@ -4,7 +4,7 @@ import { Plus, Calendar, Smile, Zap, AlertCircle, Heart } from 'lucide-react';
 
 const Log = () => {
   const [selectedMood, setSelectedMood] = useState('');
-  const [energyLevel, setEnergyLevel] = useState(5);
+  const [energyLevel, setEnergyLevel] = useState(''); // Changed to string
   const [symptoms, setSymptoms] = useState([]);
   const [notes, setNotes] = useState('');
   const [isPeriodStarted, setIsPeriodStarted] = useState(false);
@@ -66,17 +66,56 @@ const Log = () => {
         <p className="text-black-400">How are you feeling today?</p>
       </div>
 
-      {/* Quick Period Button */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={handleTogglePeriod}
-        className="w-full bg-lavender-600 text-white rounded-2xl p-4 mb-6 flex items-center justify-center shadow-glow"
+      {/* Notes */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="bg-black-900 rounded-2xl p-6 mb-6"
       >
-        <Plus size={20} className="mr-2" />
-        <span className="font-semibold">{isPeriodStarted ? "Log Period End" : "Log Period Start"}</span>
-      </motion.button>
+        <div className="flex items-center mb-4">
+          <Heart className="text-lavender-400 mr-3" size={24} />
+          <h2 className="text-lg font-semibold text-white">Notes</h2>
+        </div>
+
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="How are you feeling today? Any observations or thoughts..."
+          className="w-full h-24 p-3 bg-black-800 text-white placeholder-black-400 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-lavender-500"
+        />
+      </motion.div>
+
+      {/* Energy Level */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-black-900 rounded-2xl p-6 mb-6"
+      >
+        <div className="flex items-center mb-4">
+          <Zap className="text-lavender-400 mr-3" size={24} />
+          <h2 className="text-lg font-semibold text-white">Energy Level</h2>
+          {/* Removed energyLevel/10 display */}
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          {[ 'low', 'medium', 'high' ].map((level) => (
+            <motion.button
+              key={level}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setEnergyLevel(level)}
+              className={`p-3 rounded-xl transition-all capitalize ${
+                energyLevel === level
+                  ? 'bg-lavender-600 text-white'
+                  : 'bg-black-800 text-black-400'
+              }`}
+            >
+              {level}
+            </motion.button>
+          ))}
+        </div>
+      </motion.div>
 
       {/* Mood Selection */}
       <motion.div
@@ -108,39 +147,6 @@ const Log = () => {
         </div>
       </motion.div>
 
-      {/* Energy Level */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-black-900 rounded-2xl p-6 mb-6"
-      >
-        <div className="flex items-center mb-4">
-          <Zap className="text-lavender-400 mr-3" size={24} />
-          <h2 className="text-lg font-semibold text-white">Energy Level</h2>
-          <span className="ml-auto text-2xl font-bold text-lavender-400">{energyLevel}/10</span>
-        </div>
-
-        <div className="space-y-4">
-          <input
-            type="range"
-            min="1"
-            max="10"
-            value={energyLevel}
-            onChange={(e) => setEnergyLevel(e.target.value)}
-            className="w-full h-3 bg-black-800 rounded-lg appearance-none cursor-pointer"
-            style={{
-              background: `linear-gradient(to right, #a891bd 0%, #a891bd ${energyLevel * 10}%, #101010 ${energyLevel * 10}%, #101010 100%)`
-            }}
-          />
-          <div className="flex justify-between text-xs text-black-400">
-            <span>Low</span>
-            <span>Medium</span>
-            <span>High</span>
-          </div>
-        </div>
-      </motion.div>
-
       {/* Symptoms */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -169,26 +175,6 @@ const Log = () => {
             </motion.button>
           ))}
         </div>
-      </motion.div>
-
-      {/* Notes */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="bg-black-900 rounded-2xl p-6 mb-6"
-      >
-        <div className="flex items-center mb-4">
-          <Heart className="text-lavender-400 mr-3" size={24} />
-          <h2 className="text-lg font-semibold text-white">Notes</h2>
-        </div>
-
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="How are you feeling today? Any observations or thoughts..."
-          className="w-full h-24 p-3 bg-black-800 text-white placeholder-black-400 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-lavender-500"
-        />
       </motion.div>
 
       {/* Save Button */}
