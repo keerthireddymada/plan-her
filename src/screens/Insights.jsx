@@ -4,6 +4,15 @@ import { TrendingUp, Calendar, Bell, AlertTriangle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
 const Insights = () => {
+  const [notificationSettings, setNotificationSettings] = React.useState([
+    true, true, true, false, false
+  ]);
+
+  const toggleNotification = (index) => {
+    const newSettings = [...notificationSettings];
+    newSettings[index] = !newSettings[index];
+    setNotificationSettings(newSettings);
+  };
   const moodData = [
     { day: 'Mon', mood: 7, energy: 6 },
     { day: 'Tue', mood: 8, energy: 8 },
@@ -199,11 +208,13 @@ const Insights = () => {
               className="flex items-center justify-between p-3 bg-black-800 rounded-xl"
             >
               <span className="text-white font-medium">{notification}</span>
-              <div className={`w-12 h-6 rounded-full ${index < 3 ? 'bg-lavender-500' : 'bg-black-700'}`}>
+              <button
+                onClick={() => toggleNotification(index)}
+                className={`w-12 h-6 rounded-full ${notificationSettings[index] ? 'bg-lavender-500' : 'bg-black-700'}`}>
                 <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                  index < 3 ? 'translate-x-6' : 'translate-x-0.5'
+                  notificationSettings[index] ? 'translate-x-6' : 'translate-x-0.5'
                 } mt-0.5`} />
-              </div>
+              </button>
             </motion.div>
           ))}
         </div>
