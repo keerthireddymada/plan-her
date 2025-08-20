@@ -8,8 +8,8 @@ const Home = () => {
   const currentDate = new Date();
 
 // --- Data from your backend will go here ---
-const [cycleDay, setCycleDay] = useState(14);
-const [cyclePhase, setCyclePhase] = useState('Follicular Phase');
+const [cycleDay, setCycleDay] = useState(null);
+const [cyclePhase, setCyclePhase] = useState('');
 const [moodForecast, setMoodForecast] = useState('Energetic');
 const [energyLevel, setEnergyLevel] = useState(85);
 
@@ -30,10 +30,10 @@ useEffect(() => {
         setMoodForecast('Restful');
         setEnergyLevel(25);
       } else if (data.predicted_mood === 1) {
-        setMoodForecast('Balanced');
+        setMoodForecast('Normal');
         setEnergyLevel(60);
       } else if (data.predicted_mood === 2) {
-        setMoodForecast('Energetic');
+        setMoodForecast('Active');
         setEnergyLevel(90);
       }
     } catch (error) {
