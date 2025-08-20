@@ -2,14 +2,49 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Heart, Brain, Utensils, Sun, Moon } from 'lucide-react';
 import { format } from 'date-fns';
+import { useState, useEffect } from 'react';
 
 const Home = () => {
   const currentDate = new Date();
-  const cycleDay = 14;
-  const nextPeriod = 14;
 
-  const moodForecast = "Energetic";
-  const energyLevel = 85;
+// --- Data from your backend will go here ---
+const [cycleDay, setCycleDay] = useState(14);
+const [cyclePhase, setCyclePhase] = useState('Follicular Phase');
+const [moodForecast, setMoodForecast] = useState('Energetic');
+const [energyLevel, setEnergyLevel] = useState(85);
+
+// This value is not from the backend yet
+const nextPeriod = 14;
+
+// --- This code fetches the data from your server ---
+useEffect(() => {
+  async function getPrediction() {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/predict');
+      const data = await response.json();
+
+      setCycleDay(data.day_of_cycle);
+      setCyclePhase(data.cycle_phase);
+
+      if (data.predicted_mood === 0) {
+        setMoodForecast('Restful');
+        setEnergyLevel(25);
+      } else if (data.predicted_mood === 1) {
+        setMoodForecast('Balanced');
+        setEnergyLevel(60);
+      } else if (data.predicted_mood === 2) {
+        setMoodForecast('Energetic');
+        setEnergyLevel(90);
+      }
+    } catch (error) {
+      console.error("Error fetching prediction:", error);
+      setCyclePhase('Error');
+      setMoodForecast('Could not load');
+    }
+  }
+  getPrediction();
+}, []);
+
 
   const selfCareReminders = [
     { icon: Sun, text: "Morning meditation", time: "8:00 AM" },
