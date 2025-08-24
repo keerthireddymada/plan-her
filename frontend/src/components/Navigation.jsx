@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, Calendar, BarChart3, Share, Settings } from 'lucide-react';
+import { Home, Calendar, BarChart3, Share, User, Settings } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
@@ -11,6 +11,7 @@ const Navigation = () => {
     { path: '/log', icon: Calendar, label: 'Log' },
     { path: '/insights', icon: BarChart3, label: 'Insights' },
     { path: '/share', icon: Share, label: 'Share' },
+    { path: '/profile', icon: User, label: 'Profile' },
     { path: '/settings', icon: Settings, label: 'Settings' },
   ];
 

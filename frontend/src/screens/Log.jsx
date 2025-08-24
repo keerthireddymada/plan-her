@@ -1,42 +1,58 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Calendar, Smile, Zap, AlertCircle, Heart, Check } from 'lucide-react';
-import { moodAPI, periodAPI } from '../services/api';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Plus,
+  Calendar,
+  Smile,
+  Zap,
+  AlertCircle,
+  Heart,
+  Check,
+} from "lucide-react";
+import { moodAPI, periodAPI } from "../services/api";
 
 const Log = () => {
-  const [selectedMood, setSelectedMood] = useState('');
-  const [energyLevel, setEnergyLevel] = useState(''); // Changed to string
+  const [selectedMood, setSelectedMood] = useState("");
+  const [energyLevel, setEnergyLevel] = useState(""); // Changed to string
   const [symptoms, setSymptoms] = useState([]);
-  const [notes, setNotes] = useState('');
+  const [notes, setNotes] = useState("");
   const [isPeriodStarted, setIsPeriodStarted] = useState(false);
-  const [periodStartDate, setPeriodStartDate] = useState('');
+  const [periodStartDate, setPeriodStartDate] = useState("");
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const moods = [
-    { value: 'happy', label: '😊 Happy' },
-    { value: 'calm', label: '😌 Calm' },
-    { value: 'anxious', label: '😰 Anxious' },
-    { value: 'sad', label: '😢 Sad' },
-    { value: 'irritated', label: '😤 Irritated' },
+    { value: "happy", label: "😊 Happy" },
+    { value: "calm", label: "😌 Calm" },
+    { value: "anxious", label: "😰 Anxious" },
+    { value: "sad", label: "😢 Sad" },
+    { value: "irritated", label: "😤 Irritated" },
   ];
 
   const commonSymptoms = [
-    'Cramps', 'Headache', 'Bloating', 'Fatigue', 'Breast tenderness',
-    'Mood swings', 'Back pain', 'Nausea', 'Acne', 'Food cravings'
+    "Cramps",
+    "Headache",
+    "Bloating",
+    "Fatigue",
+    "Breast tenderness",
+    "Mood swings",
+    "Back pain",
+    "Nausea",
+    "Acne",
+    "Food cravings",
   ];
 
   const toggleSymptom = (symptom) => {
-    setSymptoms(prev =>
+    setSymptoms((prev) =>
       prev.includes(symptom)
-        ? prev.filter(s => s !== symptom)
+        ? prev.filter((s) => s !== symptom)
         : [...prev, symptom]
     );
   };
 
   const handleSaveLog = async () => {
     if (!energyLevel) {
-      alert('Please select your energy level');
+      alert("Please select your energy level");
       return;
     }
 
@@ -46,11 +62,11 @@ const Log = () => {
     try {
       // Save mood data
       await moodAPI.createMood({
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString().split("T")[0],
         energy_level: energyLevel,
-        mood: selectedMood || 'neutral',
-        symptoms: symptoms.join(', '),
-        notes: notes
+        mood: selectedMood || "neutral",
+        symptoms: symptoms.join(", "),
+        notes: notes,
       });
 
       // Save period data if period started
@@ -58,38 +74,37 @@ const Log = () => {
         await periodAPI.createPeriod({
           start_date: periodStartDate,
           end_date: null,
-          flow_intensity: 'medium'
+          flow_intensity: "medium",
         });
       }
 
       setSaveSuccess(true);
-      
+
       // Clear form after successful save
       setTimeout(() => {
-        setSelectedMood('');
-        setEnergyLevel('');
+        setSelectedMood("");
+        setEnergyLevel("");
         setSymptoms([]);
-        setNotes('');
+        setNotes("");
         setIsPeriodStarted(false);
-        setPeriodStartDate('');
+        setPeriodStartDate("");
         setSaveSuccess(false);
       }, 2000);
-
     } catch (error) {
-      console.error('Error saving log:', error);
-      alert('Failed to save log. Please try again.');
+      console.error("Error saving log:", error);
+      alert("Failed to save log. Please try again.");
     } finally {
       setSaving(false);
     }
   };
 
   const handleTogglePeriod = () => {
-    setIsPeriodStarted(prev => !prev);
+    setIsPeriodStarted((prev) => !prev);
     if (!isPeriodStarted) {
       // Set today's date as default when starting period
-      setPeriodStartDate(new Date().toISOString().split('T')[0]);
+      setPeriodStartDate(new Date().toISOString().split("T")[0]);
     } else {
-      setPeriodStartDate('');
+      setPeriodStartDate("");
     }
   };
 
@@ -100,6 +115,8 @@ const Log = () => {
       exit={{ opacity: 0, y: -20 }}
       className="pb-20 px-6 pt-12 bg-black-950 min-h-screen"
     >
+      {/* Top Navigation */}
+
       {/* Header */}
       <div className="mb-8">
         <motion.h1
@@ -141,22 +158,24 @@ const Log = () => {
           <button
             onClick={handleTogglePeriod}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-              isPeriodStarted 
-                ? 'bg-lavender-600 text-white' 
-                : 'bg-black-800 text-gray-400 hover:bg-black-700'
+              isPeriodStarted
+                ? "bg-lavender-600 text-white"
+                : "bg-black-800 text-gray-400 hover:bg-black-700"
             }`}
           >
-            {isPeriodStarted ? 'Yes' : 'No'}
+            {isPeriodStarted ? "Yes" : "No"}
           </button>
         </div>
 
         {isPeriodStarted && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             className="space-y-3"
           >
-            <label className="block text-sm text-gray-400">Period Start Date</label>
+            <label className="block text-sm text-gray-400">
+              Period Start Date
+            </label>
             <input
               type="date"
               value={periodStartDate}
@@ -200,15 +219,15 @@ const Log = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-3">
-          {[ 'low', 'medium', 'high' ].map((level) => (
+          {["low", "medium", "high"].map((level) => (
             <motion.button
               key={level}
               whileTap={{ scale: 0.95 }}
               onClick={() => setEnergyLevel(level)}
               className={`p-3 rounded-xl transition-all capitalize ${
                 energyLevel === level
-                  ? 'bg-lavender-600 text-white'
-                  : 'bg-black-800 text-black-400'
+                  ? "bg-lavender-600 text-white"
+                  : "bg-black-800 text-black-400"
               }`}
             >
               {level}
@@ -237,8 +256,8 @@ const Log = () => {
               onClick={() => setSelectedMood(mood.value)}
               className={`p-3 rounded-xl transition-all ${
                 selectedMood === mood.value
-                  ? 'bg-lavender-600 text-white'
-                  : 'bg-black-800 text-black-400'
+                  ? "bg-lavender-600 text-white"
+                  : "bg-black-800 text-black-400"
               }`}
             >
               <span className="text-sm font-medium">{mood.label}</span>
@@ -267,8 +286,8 @@ const Log = () => {
               onClick={() => toggleSymptom(symptom)}
               className={`p-3 rounded-xl transition-all text-sm ${
                 symptoms.includes(symptom)
-                  ? 'bg-lavender-600 text-white'
-                  : 'bg-black-800 text-black-400'
+                  ? "bg-lavender-600 text-white"
+                  : "bg-black-800 text-black-400"
               }`}
             >
               {symptom}
@@ -286,9 +305,9 @@ const Log = () => {
         onClick={handleSaveLog}
         disabled={saving}
         className={`w-full rounded-2xl p-4 font-semibold transition-all ${
-          saving 
-            ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-            : 'bg-lavender-600 text-white hover:bg-lavender-500'
+          saving
+            ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+            : "bg-lavender-600 text-white hover:bg-lavender-500"
         }`}
       >
         {saving ? (
@@ -297,7 +316,7 @@ const Log = () => {
             Saving...
           </div>
         ) : (
-          'Save Today\'s Log'
+          "Save Today's Log"
         )}
       </motion.button>
     </motion.div>

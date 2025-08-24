@@ -1,47 +1,59 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Heart, Send, Gift, MessageCircle, UserPlus } from 'lucide-react';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Heart, Send, Gift, MessageCircle, UserPlus } from "lucide-react";
 
 const Share = () => {
   const [selectedContacts, setSelectedContacts] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const contacts = [
-    { id: 1, name: 'Alex', relationship: 'Partner', avatar: '💙' },
-    { id: 2, name: 'Mom', relationship: 'Family', avatar: '💝' },
-    { id: 3, name: 'Emma', relationship: 'Best Friend', avatar: '🌸' },
-    { id: 4, name: 'Sarah', relationship: 'Sister', avatar: '🦋' },
+    { id: 1, name: "Alex", relationship: "Partner", avatar: "💙" },
+    { id: 2, name: "Mom", relationship: "Family", avatar: "💝" },
+    { id: 3, name: "Emma", relationship: "Best Friend", avatar: "🌸" },
+    { id: 4, name: "Sarah", relationship: "Sister", avatar: "🦋" },
   ];
 
   const supportSuggestions = [
     {
       icon: Gift,
-      title: 'Thoughtful Gestures',
-      suggestions: ['Bring favorite tea', 'Small surprise gift', 'Favorite snacks']
+      title: "Thoughtful Gestures",
+      suggestions: [
+        "Bring favorite tea",
+        "Small surprise gift",
+        "Favorite snacks",
+      ],
     },
     {
       icon: MessageCircle,
-      title: 'Communication',
-      suggestions: ['Send encouraging texts', 'Check in gently', 'Listen without fixing']
+      title: "Communication",
+      suggestions: [
+        "Send encouraging texts",
+        "Check in gently",
+        "Listen without fixing",
+      ],
     },
     {
       icon: Heart,
-      title: 'Quality Time',
-      suggestions: ['Movie night in', 'Gentle walk together', 'Cozy conversation']
-    }
+      title: "Quality Time",
+      suggestions: [
+        "Movie night in",
+        "Gentle walk together",
+        "Cozy conversation",
+      ],
+    },
   ];
 
   const predefinedMessages = [
     "I'm on day 3 of my period and feeling a bit low energy today. Some extra patience would be appreciated! 💕",
     "PMS week ahead - might need some extra cuddles and understanding. Thanks for being amazing! 🌸",
     "Feeling really good and energetic this week! Perfect time for that activity we planned. ✨",
-    "Having some tough symptoms today. A gentle check-in text would mean the world to me. 💙"
+    "Having some tough symptoms today. A gentle check-in text would mean the world to me. 💙",
   ];
 
   const toggleContact = (contactId) => {
-    setSelectedContacts(prev => 
+    setSelectedContacts((prev) =>
       prev.includes(contactId)
-        ? prev.filter(id => id !== contactId)
+        ? prev.filter((id) => id !== contactId)
         : [...prev, contactId]
     );
   };
@@ -53,16 +65,20 @@ const Share = () => {
       exit={{ opacity: 0, y: -20 }}
       className="pb-20 px-6 pt-12 bg-black-950 min-h-screen"
     >
+      {/* Top Navigation */}
+
       {/* Header */}
       <div className="mb-8">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-2xl font-bold text-white mb-2"
         >
           Share & Support
         </motion.h1>
-        <p className="text-black-400">Keep your loved ones informed and get the support you need</p>
+        <p className="text-black-400">
+          Keep your loved ones informed and get the support you need
+        </p>
       </div>
 
       {/* Current Status Card */}
@@ -72,9 +88,14 @@ const Share = () => {
         className="bg-lavender-600 rounded-2xl p-6 mb-6 text-white shadow-glow"
       >
         <h3 className="text-lg font-semibold mb-2">Current Status</h3>
-        <p className="text-lavender-100 mb-3">Follicular Phase • Day 14 • High Energy</p>
+        <p className="text-lavender-100 mb-3">
+          Follicular Phase • Day 14 • High Energy
+        </p>
         <div className="bg-black-900 rounded-xl p-3">
-          <p className="text-sm text-lavender-200">Share this phase with your support network to help them understand how to best support you right now.</p>
+          <p className="text-sm text-lavender-200">
+            Share this phase with your support network to help them understand
+            how to best support you right now.
+          </p>
         </div>
       </motion.div>
 
@@ -92,7 +113,7 @@ const Share = () => {
             Add
           </button>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-3">
           {contacts.map((contact) => (
             <motion.button
@@ -101,8 +122,8 @@ const Share = () => {
               onClick={() => toggleContact(contact.id)}
               className={`p-4 rounded-xl transition-all ${
                 selectedContacts.includes(contact.id)
-                  ? 'bg-lavender-600 text-white'
-                  : 'bg-black-800 text-black-400'
+                  ? "bg-lavender-600 text-white"
+                  : "bg-black-800 text-black-400"
               }`}
             >
               <div className="text-2xl mb-2">{contact.avatar}</div>
@@ -120,7 +141,9 @@ const Share = () => {
         transition={{ delay: 0.2 }}
         className="bg-black-900 rounded-2xl p-6 mb-6"
       >
-        <h3 className="text-lg font-semibold text-white mb-4">Quick Messages</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">
+          Quick Messages
+        </h3>
         <div className="space-y-3">
           {predefinedMessages.map((msg, index) => (
             <motion.button
@@ -142,7 +165,9 @@ const Share = () => {
         transition={{ delay: 0.3 }}
         className="bg-black-900 rounded-2xl p-6 mb-6"
       >
-        <h3 className="text-lg font-semibold text-white mb-4">Custom Message</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">
+          Custom Message
+        </h3>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -158,7 +183,9 @@ const Share = () => {
         transition={{ delay: 0.4 }}
         className="bg-black-900 rounded-2xl p-6 mb-6"
       >
-        <h3 className="text-lg font-semibold text-white mb-4">Support Suggestions</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">
+          Support Suggestions
+        </h3>
         <div className="space-y-4">
           {supportSuggestions.map((category, index) => {
             const Icon = category.icon;
@@ -178,7 +205,9 @@ const Share = () => {
                   {category.suggestions.map((suggestion, i) => (
                     <div key={i} className="flex items-center">
                       <div className="w-2 h-2 bg-lavender-400 rounded-full mr-3" />
-                      <span className="text-sm text-black-200">{suggestion}</span>
+                      <span className="text-sm text-black-200">
+                        {suggestion}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -197,12 +226,13 @@ const Share = () => {
         disabled={selectedContacts.length === 0 || !message}
         className={`w-full rounded-2xl p-4 font-semibold flex items-center justify-center transition-all ${
           selectedContacts.length > 0 && message
-            ? 'bg-lavender-600 text-white shadow-glow'
-            : 'bg-black-800 text-black-500 cursor-not-allowed'
+            ? "bg-lavender-600 text-white shadow-glow"
+            : "bg-black-800 text-black-500 cursor-not-allowed"
         }`}
       >
         <Send size={20} className="mr-2" />
-        Send to {selectedContacts.length} contact{selectedContacts.length !== 1 ? 's' : ''}
+        Send to {selectedContacts.length} contact
+        {selectedContacts.length !== 1 ? "s" : ""}
       </motion.button>
     </motion.div>
   );

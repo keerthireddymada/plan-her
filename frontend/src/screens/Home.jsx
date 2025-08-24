@@ -1,19 +1,33 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, Heart, Brain, Utensils, Sun, Moon, Check, X, AlertCircle } from 'lucide-react';
-import { format } from 'date-fns';
-import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { predictionsAPI, periodAPI } from '../services/api';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  Calendar,
+  Heart,
+  Brain,
+  Utensils,
+  Sun,
+  Moon,
+  Check,
+  X,
+  AlertCircle,
+  LogOut,
+} from "lucide-react";
+import { format } from "date-fns";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { predictionsAPI, periodAPI } from "../services/api";
+import Navigation from "../components/Navigation";
 
 const Home = () => {
   const currentDate = new Date();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   // Data from backend
   const [cycleDay, setCycleDay] = useState(null);
-  const [cyclePhase, setCyclePhase] = useState('');
-  const [moodForecast, setMoodForecast] = useState('Energetic');
+  const [cyclePhase, setCyclePhase] = useState("");
+  const [moodForecast, setMoodForecast] = useState("Energetic");
   const [energyLevel, setEnergyLevel] = useState(85);
   const [nextPeriod, setNextPeriod] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +36,7 @@ const Home = () => {
   // Period confirmation state
   const [showPeriodConfirmation, setShowPeriodConfirmation] = useState(false);
   const [periodConfirmed, setPeriodConfirmed] = useState(false);
-  const [correctPeriodDate, setCorrectPeriodDate] = useState('');
+  const [correctPeriodDate, setCorrectPeriodDate] = useState("");
   const [confirmingPeriod, setConfirmingPeriod] = useState(false);
 
   // Fetch prediction data from backend
@@ -31,7 +45,7 @@ const Home = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await predictionsAPI.getCurrentPrediction();
         const data = response.data;
 
@@ -40,14 +54,14 @@ const Home = () => {
         setNextPeriod(data.next_period_in_days);
 
         // Map predicted mood to display values
-        if (data.predicted_mood === 'low') {
-          setMoodForecast('Restful');
+        if (data.predicted_mood === "low") {
+          setMoodForecast("Restful");
           setEnergyLevel(25);
-        } else if (data.predicted_mood === 'medium') {
-          setMoodForecast('Normal');
+        } else if (data.predicted_mood === "medium") {
+          setMoodForecast("Normal");
           setEnergyLevel(60);
-        } else if (data.predicted_mood === 'high') {
-          setMoodForecast('Active');
+        } else if (data.predicted_mood === "high") {
+          setMoodForecast("Active");
           setEnergyLevel(90);
         }
 
@@ -58,23 +72,23 @@ const Home = () => {
       } catch (error) {
         console.error("Error fetching prediction:", error);
         setError("Could not load prediction data");
-        setCyclePhase('Error');
-        setMoodForecast('Could not load');
+        setCyclePhase("Error");
+        setMoodForecast("Could not load");
       } finally {
         setLoading(false);
       }
     }
-    
+
     getPrediction();
   }, []);
 
   const handlePeriodConfirmation = async (isCorrect) => {
     setConfirmingPeriod(true);
-    
+
     try {
       if (isCorrect) {
         // Period prediction was correct - use the new confirm-period endpoint
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toISOString().split("T")[0];
         await predictionsAPI.confirmPeriod(today);
         setPeriodConfirmed(true);
       } else {
@@ -83,8 +97,8 @@ const Home = () => {
         // The user will manually enter the correct date
       }
     } catch (error) {
-      console.error('Error confirming period:', error);
-      alert('Failed to confirm period. Please try again.');
+      console.error("Error confirming period:", error);
+      alert("Failed to confirm period. Please try again.");
     } finally {
       setConfirmingPeriod(false);
     }
@@ -92,24 +106,24 @@ const Home = () => {
 
   const handleCorrectPeriodDate = async () => {
     if (!correctPeriodDate) {
-      alert('Please enter the correct period start date');
+      alert("Please enter the correct period start date");
       return;
     }
 
     setConfirmingPeriod(true);
-    
+
     try {
       // Use the new confirm-period endpoint with the correct date
       await predictionsAPI.confirmPeriod(correctPeriodDate);
-      
+
       setPeriodConfirmed(true);
       setShowPeriodConfirmation(false);
-      
+
       // Refresh prediction data
       window.location.reload();
     } catch (error) {
-      console.error('Error updating period date:', error);
-      alert('Failed to update period date. Please try again.');
+      console.error("Error updating period date:", error);
+      alert("Failed to update period date. Please try again.");
     } finally {
       setConfirmingPeriod(false);
     }
@@ -118,21 +132,21 @@ const Home = () => {
   const selfCareReminders = [
     { icon: Sun, text: "Morning meditation", time: "8:00 AM" },
     { icon: Heart, text: "Light exercise", time: "6:00 PM" },
-    { icon: Moon, text: "Wind down routine", time: "9:30 PM" }
+    { icon: Moon, text: "Wind down routine", time: "9:30 PM" },
   ];
 
   const foodRecommendations = [
     "Iron-rich foods (spinach, lentils)",
     "Omega-3 sources (salmon, walnuts)",
-    "Complex carbs (quinoa, sweet potato)"
+    "Complex carbs (quinoa, sweet potato)",
   ];
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black-950">
-        <div className="text-white text-center">
+      <div className="min-h-screen flex items-center justify-center bg-black-950 text-white">
+        <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lavender-400 mx-auto mb-4"></div>
-          <p>Loading your cycle data...</p>
+          <p className="text-gray-400">Loading your cycle data...</p>
         </div>
       </div>
     );
@@ -145,16 +159,18 @@ const Home = () => {
       exit={{ opacity: 0, y: -20 }}
       className="pb-20 px-6 pt-12 bg-black-950 min-h-screen"
     >
-      {/* Header */}
+      {/* Top Navigation */}
+
+      {/* Header with Profile Icon */}
       <div className="mb-8">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-2xl font-bold text-white mb-2"
         >
-          Good morning, {user?.name || 'User'}
+          Good morning, {user?.name || "User"}
         </motion.h1>
-        <p className="text-black-400">{format(currentDate, 'EEEE, MMMM d')}</p>
+        <p className="text-black-400">{format(currentDate, "EEEE, MMMM d")}</p>
       </div>
 
       {/* Error Message */}
@@ -179,10 +195,10 @@ const Home = () => {
             <AlertCircle size={24} className="mr-3" />
             <h3 className="text-lg font-semibold">Period Confirmation</h3>
           </div>
-          
+
           <p className="mb-4 text-lavender-100">
-            We predicted your period would start in {nextPeriod} days. 
-            Did your period start today?
+            We predicted your period would start in {nextPeriod} days. Did your
+            period start today?
           </p>
 
           <div className="flex space-x-3 mb-4">
@@ -190,9 +206,9 @@ const Home = () => {
               onClick={() => handlePeriodConfirmation(true)}
               disabled={confirmingPeriod}
               className={`flex-1 py-2 px-4 rounded-lg font-semibold flex items-center justify-center ${
-                confirmingPeriod 
-                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                  : 'bg-green-600 text-white hover:bg-green-700'
+                confirmingPeriod
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-green-600 text-white hover:bg-green-700"
               }`}
             >
               <Check size={16} className="mr-2" />
@@ -202,9 +218,9 @@ const Home = () => {
               onClick={() => handlePeriodConfirmation(false)}
               disabled={confirmingPeriod}
               className={`flex-1 py-2 px-4 rounded-lg font-semibold flex items-center justify-center ${
-                confirmingPeriod 
-                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                  : 'bg-red-600 text-white hover:bg-red-700'
+                confirmingPeriod
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-red-600 text-white hover:bg-red-700"
               }`}
             >
               <X size={16} className="mr-2" />
@@ -216,7 +232,7 @@ const Home = () => {
           {!showPeriodConfirmation && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+              animate={{ opacity: 1, height: "auto" }}
               className="space-y-3"
             >
               <p className="text-sm text-lavender-200">
@@ -233,11 +249,11 @@ const Home = () => {
                 disabled={confirmingPeriod || !correctPeriodDate}
                 className={`w-full py-2 px-4 rounded-lg font-semibold ${
                   confirmingPeriod || !correctPeriodDate
-                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                    : 'bg-lavender-400 text-black hover:bg-lavender-300'
+                    ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                    : "bg-lavender-400 text-black hover:bg-lavender-300"
                 }`}
               >
-                {confirmingPeriod ? 'Updating...' : 'Update & Retrain Model'}
+                {confirmingPeriod ? "Updating..." : "Update & Retrain Model"}
               </button>
             </motion.div>
           )}
@@ -251,7 +267,8 @@ const Home = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 p-4 bg-green-900 border border-green-700 rounded-xl text-green-200 text-sm"
         >
-          ✅ Period confirmed! Your model will learn from this data for better predictions.
+          ✅ Period confirmed! Your model will learn from this data for better
+          predictions.
         </motion.div>
       )}
 
@@ -265,21 +282,27 @@ const Home = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
             <Calendar size={24} className="mr-3" />
-            <span className="text-lg font-semibold">Cycle Day {cycleDay || '--'}</span>
+            <span className="text-lg font-semibold">
+              Cycle Day {cycleDay || "--"}
+            </span>
           </div>
           <div className="text-right">
             <p className="text-sm opacity-90">Next period in</p>
-            <p className="text-xl font-bold">{nextPeriod !== null ? `${nextPeriod} days` : '--'}</p>
+            <p className="text-xl font-bold">
+              {nextPeriod !== null ? `${nextPeriod} days` : "--"}
+            </p>
           </div>
         </div>
-        
+
         <div className="bg-black-900 rounded-xl p-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-lavender-200">{cyclePhase || 'Loading...'}</span>
+            <span className="text-sm text-lavender-200">
+              {cyclePhase || "Loading..."}
+            </span>
             <span className="text-sm text-lavender-200">{moodForecast}</span>
           </div>
           <div className="w-full bg-black-800 rounded-full h-2">
-            <div 
+            <div
               className="bg-lavender-400 h-2 rounded-full transition-all duration-300"
               style={{ width: `${energyLevel}%` }}
             ></div>
@@ -294,7 +317,9 @@ const Home = () => {
         transition={{ delay: 0.2 }}
         className="mb-6"
       >
-        <h2 className="text-xl font-bold text-white mb-4">Self-Care Reminders</h2>
+        <h2 className="text-xl font-bold text-white mb-4">
+          Self-Care Reminders
+        </h2>
         <div className="space-y-3">
           {selfCareReminders.map((reminder, index) => (
             <motion.div
@@ -321,7 +346,9 @@ const Home = () => {
         transition={{ delay: 0.4 }}
         className="mb-6"
       >
-        <h2 className="text-xl font-bold text-white mb-4">Food Recommendations</h2>
+        <h2 className="text-xl font-bold text-white mb-4">
+          Food Recommendations
+        </h2>
         <div className="bg-black-900 rounded-xl p-4">
           <div className="flex items-center mb-3">
             <Utensils size={20} className="text-lavender-400 mr-3" />
@@ -351,9 +378,10 @@ const Home = () => {
         transition={{ delay: 0.6 }}
       >
         <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <motion.button
             whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/log")}
             className="bg-lavender-600 text-white p-4 rounded-xl flex items-center justify-center space-x-2"
           >
             <Brain size={20} />
@@ -361,13 +389,27 @@ const Home = () => {
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/log")}
             className="bg-black-900 text-white p-4 rounded-xl flex items-center justify-center space-x-2 border border-gray-700"
           >
             <Calendar size={20} />
             <span>Track Period</span>
           </motion.button>
         </div>
+
+        {/* Logout Button */}
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={logout}
+          className="w-full bg-red-600 text-white p-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-red-700 transition-colors"
+        >
+          <LogOut size={20} />
+          <span>Logout</span>
+        </motion.button>
       </motion.div>
+
+      {/* Navigation */}
+      <Navigation />
     </motion.div>
   );
 };

@@ -17,48 +17,46 @@ export default function Signup() {
     clearError();
 
     const result = await register(email, password, name);
-    
+
     if (result.success) {
       // New users always need profile setup
       navigate("/question1");
     }
-    
+
     setIsLoading(false);
   };
 
   return (
     <motion.div
-      className="min-h-screen flex items-center justify-center bg-black-950 text-white px-6"
+      className="auth-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <div className="w-full max-w-sm bg-black-900 p-8 rounded-2xl shadow-lg">
+      <div className="auth-box">
         {/* Logo / Title */}
-        <h1 className="text-3xl font-bold text-center mb-2 text-lavender-400">
-          Create Account
-        </h1>
-        <p className="text-gray-400 text-center mb-6">
-          Start your journey with us
-        </p>
+        <div className="auth-title-section">
+          <h1 className="auth-title">Create Account</h1>
+          <p className="auth-description">Start your journey with us</p>
+        </div>
 
         {/* Error Message */}
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-3 bg-red-900 border border-red-700 rounded-lg text-red-200 text-sm"
+            className="error-message"
           >
             {error}
           </motion.div>
         )}
 
         {/* Signup Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm mb-1">Name</label>
+        <form onSubmit={handleSubmit} className="form-container">
+          <div className="form-group">
+            <label className="form-label">Name</label>
             <input
               type="text"
-              className="w-full px-4 py-3 rounded-xl bg-black-800 text-white focus:outline-none focus:ring-2 focus:ring-lavender-400"
+              className="form-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
@@ -67,11 +65,11 @@ export default function Signup() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm mb-1">Email</label>
+          <div className="form-group">
+            <label className="form-label">Email</label>
             <input
               type="email"
-              className="w-full px-4 py-3 rounded-xl bg-black-800 text-white focus:outline-none focus:ring-2 focus:ring-lavender-400"
+              className="form-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
@@ -80,11 +78,11 @@ export default function Signup() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm mb-1">Password</label>
+          <div className="form-group">
+            <label className="form-label">Password</label>
             <input
               type="password"
-              className="w-full px-4 py-3 rounded-xl bg-black-800 text-white focus:outline-none focus:ring-2 focus:ring-lavender-400"
+              className="form-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -98,11 +96,7 @@ export default function Signup() {
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={isLoading}
-            className={`w-full font-semibold py-3 rounded-xl transition-all ${
-              isLoading 
-                ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                : 'bg-lavender-400 text-black hover:bg-lavender-300'
-            }`}
+            className={isLoading ? "btn-disabled" : "btn-primary"}
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
@@ -110,7 +104,7 @@ export default function Signup() {
                 Creating account...
               </div>
             ) : (
-              'Sign Up'
+              "Sign Up"
             )}
           </motion.button>
         </form>

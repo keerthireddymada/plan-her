@@ -7,19 +7,7 @@ from ..models.user import User
 from ..models.mood import DailyMood
 from ..schemas.prediction import PredictionResponse
 from ..core.security import get_current_active_user
-from ..core.ml_model import (
-    make_prediction,
-    train_model,
-    save_model,
-    should_retrain_model,
-    load_model
-)
-from ..core.cycle_calculator import (
-    calculate_day_of_cycle,
-    calculate_cycle_phase,
-    calculate_days_until_next_period,
-    get_cycle_statistics
-)
+from ..core.simple_predictor import SimplePredictor
 
 router = APIRouter()
 
@@ -37,38 +25,14 @@ async def get_current_prediction(
         target_date = date.today()
     
     try:
-        # Try to make ML prediction
-        prediction = make_prediction(current_user.id, target_date, db)
+        # Use simple predictor
+        prediction = SimplePredictor.get_prediction(current_user.id, target_date, db)
         return PredictionResponse(**prediction)
     except ValueError as e:
-        # If ML prediction fails, provide basic cycle info
-        try:
-            day_of_cycle = calculate_day_of_cycle(current_user.id, target_date, db)
-            
-            # Get user profile for cycle phase calculation
-            from ..models.profile import UserProfile
-            profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
-            
-            if profile:
-                cycle_phase = calculate_cycle_phase(day_of_cycle, profile.cycle_length, profile.luteal_length)
-                days_until_next = calculate_days_until_next_period(current_user.id, db)
-                
-                return PredictionResponse(
-                    day_of_cycle=day_of_cycle,
-                    cycle_phase=cycle_phase,
-                    predicted_mood="medium",  # Default when no ML model
-                    next_period_in_days=days_until_next
-                )
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User profile not found. Please create a profile first."
-                )
-        except Exception:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=str(e)
-            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
 
 
 @router.post("/confirm-period")

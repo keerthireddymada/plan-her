@@ -16,7 +16,7 @@ export default function Login() {
     clearError();
 
     const result = await login(email, password);
-    
+
     if (result.success) {
       // Redirect based on profile status
       if (result.hasProfile) {
@@ -25,25 +25,24 @@ export default function Login() {
         navigate("/question1"); // User needs profile setup → go to questions
       }
     }
-    
+
     setIsLoading(false);
   };
 
   return (
     <motion.div
-      className="min-h-screen flex items-center justify-center bg-black-950 text-white px-6 font-serif"
+      className="auth-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <div className="w-full max-w-sm bg-black-900 p-8 rounded-2xl shadow-lg">
+      <div className="auth-box">
         {/* Logo / Title */}
-        <div className="text-center mb-8">
-          <img src="/logo.png" alt="PlanHer Logo" className="w-24 h-24 mx-auto mb-4" />
-          <h1 className="text-5xl font-bold text-lavender-400">
-            PlanHer
-          </h1>
+        <div className="auth-title-section">
+          <img src="/logo.png" alt="PlanHer Logo" className="auth-logo" />
+          <h1 className="auth-title">PlanHer</h1>
           <p className="text-white mt-2">
-            Track your period cycle, understand your body, and live in sync with your natural rythm.
+            Track your period cycle, understand your body, and live in sync with
+            your natural rythm.
           </p>
         </div>
 
@@ -52,19 +51,19 @@ export default function Login() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-3 bg-red-900 border border-red-700 rounded-lg text-red-200 text-sm"
+            className="error-message"
           >
             {error}
           </motion.div>
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm mb-1">Email</label>
+        <form onSubmit={handleSubmit} className="form-container">
+          <div className="form-group">
+            <label className="form-label">Email</label>
             <input
               type="email"
-              className="w-full px-4 py-3 rounded-xl bg-black-800 text-white focus:outline-none focus:ring-2 focus:ring-lavender-400"
+              className="form-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
@@ -73,11 +72,11 @@ export default function Login() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm mb-1">Password</label>
+          <div className="form-group">
+            <label className="form-label">Password</label>
             <input
               type="password"
-              className="w-full px-4 py-3 rounded-xl bg-black-800 text-white focus:outline-none focus:ring-2 focus:ring-lavender-400"
+              className="form-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -91,11 +90,7 @@ export default function Login() {
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={isLoading}
-            className={`w-full font-semibold py-3 rounded-xl transition-all ${
-              isLoading 
-                ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                : 'bg-lavender-400 text-black hover:bg-lavender-300'
-            }`}
+            className={isLoading ? "btn-disabled" : "btn-primary"}
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
@@ -103,7 +98,7 @@ export default function Login() {
                 Logging in...
               </div>
             ) : (
-              'Login'
+              "Login"
             )}
           </motion.button>
         </form>

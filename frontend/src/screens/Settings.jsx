@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { profileAPI } from '../services/api';
 
+
 const Settings = () => {
   const [notifications, setNotifications] = useState(true);
   const [theme, setTheme] = useState('dark');
@@ -116,6 +117,8 @@ const Settings = () => {
       exit={{ opacity: 0, y: -20 }}
       className="pb-20 px-6 pt-12 bg-black-950 min-h-screen"
     >
+      {/* Top Navigation */}
+
       {/* Header */}
       <div className="mb-8">
         <motion.h1 

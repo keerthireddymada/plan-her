@@ -52,12 +52,15 @@ export const AuthProvider = ({ children }) => {
     try {
       await profileAPI.getProfile();
       setHasProfile(true);
+      return true;
     } catch (error) {
       if (error.response?.status === 404) {
         setHasProfile(false);
+        return false;
       } else {
         console.error('Profile check failed:', error);
         setHasProfile(false);
+        return false;
       }
     }
   };
@@ -72,10 +75,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
       
-      // Check if user has a profile
-      await checkProfileStatus();
+      // Check if user has a profile and return the result
+      const profileExists = await checkProfileStatus();
       
-      return { success: true, hasProfile };
+      return { success: true, hasProfile: profileExists };
     } catch (error) {
       let errorMessage = 'Login failed';
       

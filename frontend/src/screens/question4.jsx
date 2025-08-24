@@ -1,39 +1,50 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useProfile } from "../contexts/ProfileContext";
 import { profileAPI } from "../services/api";
 
 const Question4 = () => {
   const navigate = useNavigate();
-  const { profileData, clearProfileData } = useProfile();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [conditions, setConditions] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleFinishSetup = async () => {
-    setIsLoading(true);
-    setError("");
+  const handleFinish = async () => {
+    setIsSubmitting(true);
 
     try {
-      const response = await profileAPI.createProfile(profileData);
-      console.log("Profile creation response:", response);
-      
-      // FastAPI returns the created profile directly, not wrapped in success/message
-      if (response.data) {
-        clearProfileData();
-        navigate("/home");
-      } else {
-        setError("Profile creation failed");
-      }
-    } catch (err) {
-      console.error("Profile creation error:", err);
-      if (err.response?.data?.detail) {
-        setError(err.response.data.detail);
-      } else {
-        setError("Profile creation failed. Please try again.");
-      }
+      // Get all data from localStorage
+      const questionnaireData =
+        JSON.parse(localStorage.getItem("questionnaireData")) || {};
+
+      // Prepare profile data
+      const profileData = {
+        height_cm: questionnaireData.height,
+        weight_kg: questionnaireData.weight,
+        cycle_length: questionnaireData.cycleLength,
+        period_regularity: questionnaireData.periodRegularity || "regular",
+        period_description: questionnaireData.periodDescription || "usual",
+        medical_conditions: conditions,
+        last_period_start: questionnaireData.lastPeriod,
+        last_period_end: questionnaireData.periodEndDate,
+        luteal_length: 14, // Default value
+        menses_length: 5, // Default value
+        unusual_bleeding: questionnaireData.periodDescription === "unusual",
+        number_of_peak: 1, // Default value
+      };
+
+      // Create profile
+      await profileAPI.createProfile(profileData);
+
+      // Clear localStorage
+      localStorage.removeItem("questionnaireData");
+
+      // Navigate to home
+      navigate("/home");
+    } catch (error) {
+      console.error("Error creating profile:", error);
+      alert("Failed to create profile. Please try again.");
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -46,46 +57,53 @@ const Question4 = () => {
       <div className="w-full max-w-sm bg-black-900 p-8 rounded-2xl shadow-lg">
         {/* Logo / Title */}
         <div className="text-center mb-8">
-          <img src="/logo.png" alt="PlanHer Logo" className="w-16 h-16 mx-auto mb-4" />
+          <img
+            src="/logo.png"
+            alt="PlanHer Logo"
+            className="w-16 h-16 mx-auto mb-4"
+          />
           <h1 className="text-3xl font-bold text-lavender-400 mb-2">
-            Setup Complete
+            Medical Information
           </h1>
         </div>
 
-        <h2 className="text-xl font-semibold mb-2 text-center">You're all set!</h2>
-        <p className="text-gray-400 text-sm mb-6 text-center">
-          Your profile has been created. You can now start tracking your cycle and mood.
-        </p>
-
-        {/* Error Message */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-3 bg-red-900 border border-red-700 rounded-lg text-red-200 text-sm"
-          >
-            {error}
-          </motion.div>
-        )}
+        <h2 className="text-xl font-semibold mb-6 text-center">
+          Do you suffer from any medical conditions?
+          <br />
+          If yes, please mention them.
+        </h2>
 
         <div className="space-y-4">
+          <div>
+            <label className="block text-sm mb-1">
+              Medical Conditions (Optional)
+            </label>
+            <textarea
+              placeholder="Mention all health conditions"
+              value={conditions}
+              onChange={(e) => setConditions(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-black-800 text-white focus:outline-none focus:ring-2 focus:ring-lavender-400 resize-none"
+              rows={4}
+            />
+          </div>
+
           <motion.button
             whileTap={{ scale: 0.95 }}
-            onClick={handleFinishSetup}
-            disabled={isLoading}
+            onClick={handleFinish}
+            disabled={isSubmitting}
             className={`w-full font-semibold py-3 rounded-xl transition-all ${
-              isLoading 
-                ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                : 'bg-lavender-400 text-black hover:bg-lavender-300'
+              isSubmitting
+                ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                : "bg-lavender-400 text-black hover:bg-lavender-300"
             }`}
           >
-            {isLoading ? (
+            {isSubmitting ? (
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black mr-2"></div>
                 Creating Profile...
               </div>
             ) : (
-              'Finish Setup'
+              "Finish Setup"
             )}
           </motion.button>
         </div>

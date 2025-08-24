@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Numeric, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Numeric, ForeignKey, Date, Text
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from ..database import Base
@@ -11,15 +11,22 @@ class UserProfile(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     
     # Physical measurements
-    height_cm = Column(Integer)
-    weight_kg = Column(Numeric(5, 2))
+    height_cm = Column(Integer, nullable=False)
+    weight_kg = Column(Numeric(5, 2), nullable=False)
     
     # Cycle information
-    cycle_length = Column(Integer)
-    luteal_length = Column(Integer)
-    menses_length = Column(Integer)
+    cycle_length = Column(Integer, nullable=False)
+    luteal_length = Column(Integer, nullable=False)
+    menses_length = Column(Integer, nullable=False)
     unusual_bleeding = Column(Boolean, default=False)
-    number_of_peak = Column(Integer, default=2)
+    number_of_peak = Column(Integer, default=1)
+    
+    # Period information
+    period_regularity = Column(String(20), nullable=False)  # "regular" or "irregular"
+    period_description = Column(String(20), nullable=False)  # "usual" or "unusual"
+    medical_conditions = Column(Text, nullable=True)
+    last_period_start = Column(Date, nullable=False)
+    last_period_end = Column(Date, nullable=False)
     
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
